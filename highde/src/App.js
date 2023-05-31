@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { parseAccessTokenFromUrl } from './utils/auth';
 import Login from './components/Login';
-import RecentlyPlayed from './components/RecentlyPlayed';
+import TopTracks from './components/TopTracks';
 
 function App() {
   const [token, setToken] = useState(null);
@@ -15,9 +15,9 @@ function App() {
 
   return (
     <div className="App">
-      {!token && <Login />}
-      {token && <RecentlyPlayed token={token} />}
-    </div>
+    {!token && <Login />}
+    {token && <TopTracks token={token} />}
+  </div>
   );
 }
 
