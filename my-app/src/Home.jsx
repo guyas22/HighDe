@@ -19,3 +19,8 @@ function Home() {
 }
 
 export default Home;
+
+
+
+const clientId = '03e50620de3c4aaea41cdd38a55fcdde';
+const redirectUri = 'http://localhost:3000'; // replace with the redirect URI you set up in your Spotify application
