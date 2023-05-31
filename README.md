@@ -1,2 +1,2 @@
 # HighDe
-Noa and Guy prjoet
+Noa and Guy project
