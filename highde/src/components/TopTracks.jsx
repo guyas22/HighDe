@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {getTrackFeatures, getTopTracks, createPlaylist, addTracksToPlaylist, getRecommendations } from '../api/spotify';
 import SelectableTrack from './SelectableTrack';
 import './TopTracks.css';
-const TopTracks = ({ token, userId }) => {
+const TopTracks = ({ token, userId , setPage, setPlaylistIds}) => {
   const [tracks, setTracks] = useState([]);
   const [selectedTracks, setSelectedTracks] = useState([]);
 
@@ -74,6 +74,10 @@ const TopTracks = ({ token, userId }) => {
 
     const recommendedTracks = await getRecommendationsByTempo(tempoRanges, seedTracks);
     console.log(recommendedTracks)
+    
+    // Create array to hold playlist IDs
+    //const playlistIdsArray = [];
+
     for (let i = 0; i < 3; i++) {
       const playlistTracks = recommendedTracks[i];
 
@@ -81,12 +85,21 @@ const TopTracks = ({ token, userId }) => {
       createPlaylist(token, userId, playlistName)
         .then(response => {
           const playlistId = response.data.id;
+
+          // Push the playlistId to the array
+          setPlaylistIds(oldArray => [...oldArray,playlistId])
+          //playlistIdsArray.push(playlistId);
           
           const trackUris = playlistTracks.map(track => track.uri);
           return addTracksToPlaylist(token, playlistId, trackUris);
         })
         .then(() => {
           console.log(`${playlistName} created successfully`);
+          // If it's the last playlist, change the page and set playlist IDs
+          //if (i === 2) {
+          setPage('player');
+          //setPlaylistIds(playlistIdsArray);
+          //}
         })
         .catch(error => {
           console.error(`Error creating ${playlistName}`, error);
