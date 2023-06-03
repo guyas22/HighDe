@@ -13,7 +13,7 @@ const Player = ({ token, userId, setPage, playlistIds}) => {
 
   return (
     <div className="player">
-      <h1>Player</h1>
+      <h1></h1>
       {
         <PlaylistPlayer token={token} playlistIds={playlistIds} />
       }

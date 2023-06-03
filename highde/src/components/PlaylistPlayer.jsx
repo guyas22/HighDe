@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from 'react';
+import './PlaylistPlayer.css';
 
 function PlaylistPlayer({ token, playlistIds }) {
     if (!playlistIds || playlistIds.length === 0) {
     // return or handle the case where playlistIds is undefined or empty
     console.log("error in playlistIds initialization")
     }
-    const [currTempu, setCurrTempo] = useState(0)
-    const [currentPlaylistId, setCurrentPlaylistId] = useState(playlistIds[currTempu]);
+    const playlistNames = {
+        0: 'Slow Tempo Playlist',
+        1: 'Medium Tempo Playlist',
+        2: 'Fast Tempo Playlist',
+      };
+
+    const [currTempo, setCurrTempo] = useState(0)
+    const [currentPlaylistId, setCurrentPlaylistId] = useState(playlistIds[currTempo]);
+    console.log(playlistIds)
 
   useEffect(() => {
+    console.log(currentPlaylistId)
     const script = document.createElement('script');
 
     script.src = 'https://sdk.scdn.co/spotify-player.js';
@@ -60,22 +69,29 @@ function PlaylistPlayer({ token, playlistIds }) {
   }, [token, currentPlaylistId]);
 
   const changePlaylist = (tempo) => {
-    if (tempo === 'Shwaye' && currTempu > 0) {
-        setCurrTempo(currTempu - 1)
-        setCurrentPlaylistId(playlistIds[currTempu])
+    if (tempo === 'Shwaye' && currTempo > 0) {
+        setCurrTempo(currTempo - 1)
+        setCurrentPlaylistId(playlistIds[currTempo])
     }
-    if (tempo === 'HighDe' && currTempu < 2) {
-        setCurrTempo(currTempu + 1)
-        setCurrentPlaylistId(playlistIds[currTempu])
+    if (tempo === 'HighDe' && currTempo < 2) {
+        setCurrTempo(currTempo + 1)
+        setCurrentPlaylistId(playlistIds[currTempo])
     }
+    console.log(currTempo)
   };
 
   return (
-    <div className="playlist-player">
-      <h1>Playing the Slow Tempo Playlist</h1>
-      <button onClick={() => changePlaylist('Shwaye')}>Shwaye Shwaye</button>
-      <button onClick={() => changePlaylist('HighDe')}>HighDe</button>
+    <div className="playlist-container">
+    <h1>Playing Now - {playlistNames[currTempo]}</h1>
+    <div className="playlist-grid">
+      <div className="playlist-button" onClick={() => changePlaylist('Shwaye')}>
+        <h2>Shwaye Shwaye</h2>
+      </div>
+      <div className="playlist-button" onClick={() => changePlaylist('HighDe')}>
+        <h2>HighDe</h2>
+      </div>
     </div>
+  </div>
   );
 }
 
