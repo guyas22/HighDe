@@ -59,18 +59,22 @@ function PlaylistPlayer({ token, playlistIds }) {
     };
   }, [token, currentPlaylistId]);
 
-  const changePlaylist = (speed) => {
-    if()
-    if (currTempu < 3 && currTempu >= 0){
-        setCurrentPlaylistId(playlistIds[index]);
+  const changePlaylist = (tempo) => {
+    if (tempo === 'Shwaye' && currTempu > 0) {
+        setCurrTempo(currTempu - 1)
+        setCurrentPlaylistId(playlistIds[currTempu])
+    }
+    if (tempo === 'HighDe' && currTempu < 2) {
+        setCurrTempo(currTempu + 1)
+        setCurrentPlaylistId(playlistIds[currTempu])
     }
   };
 
   return (
     <div className="playlist-player">
       <h1>Playing the Slow Tempo Playlist</h1>
-      <button onClick={() => changePlaylist('slow')}>Shwaye Shwaye</button>
-      <button onClick={() => changePlaylist('fast')}>HighDe</button>
+      <button onClick={() => changePlaylist('Shwaye')}>Shwaye Shwaye</button>
+      <button onClick={() => changePlaylist('HighDe')}>HighDe</button>
     </div>
   );
 }
