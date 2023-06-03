@@ -67,43 +67,29 @@ const TopTracks = ({ token, userId , setPage, setPlaylistIds}) => {
     }
 
     const seedTracks = selectedTracks.map(track => track.id);
-    
 
     const tempoRanges = [[60, 100], [100, 140], [140, 200]]; // Slow, medium, and fast tempo ranges (BPM)
     const tempoPlaylists = ["Slow Tempo Playlist", "Medium Tempo Playlist", "Fast Tempo Playlist"];
 
     const recommendedTracks = await getRecommendationsByTempo(tempoRanges, seedTracks);
-    console.log(recommendedTracks)
     
-    // Create array to hold playlist IDs
-    //const playlistIdsArray = [];
-
-    for (let i = 0; i < 3; i++) {
-      const playlistTracks = recommendedTracks[i];
-
+    for (const [i, playlistTracks] of recommendedTracks.entries()) {
       const playlistName = tempoPlaylists[i];
-      createPlaylist(token, userId, playlistName)
-        .then(response => {
-          const playlistId = response.data.id;
 
-          // Push the playlistId to the array
-          setPlaylistIds(oldArray => [...oldArray,playlistId])
-          //playlistIdsArray.push(playlistId);
-          
-          const trackUris = playlistTracks.map(track => track.uri);
-          return addTracksToPlaylist(token, playlistId, trackUris);
-        })
-        .then(() => {
-          console.log(`${playlistName} created successfully`);
-          // If it's the last playlist, change the page and set playlist IDs
-          //if (i === 2) {
-          setPage('player');
-          //setPlaylistIds(playlistIdsArray);
-          //}
-        })
-        .catch(error => {
-          console.error(`Error creating ${playlistName}`, error);
-        });
+      try {
+        const playlistResponse = await createPlaylist(token, userId, playlistName);
+        const playlistId = playlistResponse.data.id;
+
+        setPlaylistIds(oldArray => [...oldArray, playlistId]);
+
+        const trackUris = playlistTracks.map(track => track.uri);
+        await addTracksToPlaylist(token, playlistId, trackUris);
+        
+        console.log(`${playlistName} created successfully`);
+        setPage('player');
+      } catch (error) {
+        console.error(`Error creating ${playlistName}`, error);
+      }
     }
   };
 
