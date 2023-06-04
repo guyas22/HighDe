@@ -1,23 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import './PlaylistPlayer.css';
+import React, { useState, useEffect } from 'react';
+import './PlaylistPlayer.css'
 
-function PlaylistPlayer({ token, playlistIds }) {
-    if (!playlistIds || playlistIds.length === 0) {
-    // return or handle the case where playlistIds is undefined or empty
-    console.log("error in playlistIds initialization")
-    }
-    const playlistNames = {
-        0: 'Slow Tempo Playlist',
-        1: 'Medium Tempo Playlist',
-        2: 'Fast Tempo Playlist',
-      };
-
-    const [currTempo, setCurrTempo] = useState(0)
-    const [currentPlaylistId, setCurrentPlaylistId] = useState(playlistIds[currTempo]);
-    console.log(playlistIds)
+const PlaylistPlayer = ({ token, playlistIds = [] }) => {
+  const [playlistIndex, setPlaylistIndex] = useState(0);
+  const [playlistName, setPlaylistName] = useState('');
+  const [deviceId, setDeviceId] = useState(null);
 
   useEffect(() => {
-    console.log(currentPlaylistId)
     const script = document.createElement('script');
 
     script.src = 'https://sdk.scdn.co/spotify-player.js';
@@ -31,28 +20,11 @@ function PlaylistPlayer({ token, playlistIds }) {
         getOAuthToken: cb => { cb(token); }
       });
 
-      // Error handling
-      player.addListener('initialization_error', ({ message }) => { console.error(message); });
-      player.addListener('authentication_error', ({ message }) => { console.error(message); });
-      player.addListener('account_error', ({ message }) => { console.error(message); });
-      player.addListener('playback_error', ({ message }) => { console.error(message); });
-
-      // Playback status updates
-      player.addListener('player_state_changed', state => { console.log(state); });
-
       // Ready
       player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
-        
-        // play the playlist
-        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
-          method: 'PUT',
-          body: JSON.stringify({ context_uri: `spotify:playlist:${currentPlaylistId}` }),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-        });
+        setDeviceId(device_id);
+        switchPlaylist(0);
       });
 
       // Not Ready
@@ -66,33 +38,55 @@ function PlaylistPlayer({ token, playlistIds }) {
     return () => {
       document.body.removeChild(script);
     };
-  }, [token, currentPlaylistId]);
+  }, [token]);
 
-  const changePlaylist = (tempo) => {
-    if (tempo === 'Shwaye' && currTempo > 0) {
-        setCurrTempo(currTempo - 1)
-        setCurrentPlaylistId(playlistIds[currTempo])
+  const getPlaylistName = async (playlistId) => {
+    const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await response.json();
+    setPlaylistName(data.name);
+  };
+
+  const playPlaylist = async (playlistId) => {
+    if (!deviceId) {
+      console.error('No device id available');
+      return;
     }
-    if (tempo === 'HighDe' && currTempo < 2) {
-        setCurrTempo(currTempo + 1)
-        setCurrentPlaylistId(playlistIds[currTempo])
-    }
-    console.log(currTempo)
+    await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ context_uri: `spotify:playlist:${playlistId}` }),
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    });
+  };
+
+  const switchPlaylist = (delta) => {
+    setPlaylistIndex(prevIndex => {
+      const newIndex = prevIndex + delta;
+
+      if (newIndex < 0 || newIndex >= playlistIds.length) return prevIndex;  // Out of bounds
+
+      getPlaylistName(playlistIds[newIndex]);
+      playPlaylist(playlistIds[newIndex]);
+
+      return newIndex;
+    });
   };
 
   return (
     <div className="playlist-container">
-    <h1>Playing Now - {playlistNames[currTempo]}</h1>
-    <div className="playlist-grid">
-      <div className="playlist-button" onClick={() => changePlaylist('Shwaye')}>
-        <h2>Shwaye Shwaye</h2>
+      <h1>Playlist Player</h1>
+      <div className="playlist-grid">
+        <button className="playlist-button" onClick={() => switchPlaylist(-1)}>
+          Shwaye Shwaye
+        </button>
+        <button className="playlist-button" onClick={() => switchPlaylist(1)}>
+          HighDe HighDe
+        </button>
       </div>
-      <div className="playlist-button" onClick={() => changePlaylist('HighDe')}>
-        <h2>HighDe</h2>
-      </div>
+      <p>Currently playing: {playlistName}</p>
     </div>
-  </div>
   );
-}
+};
 
 export default PlaylistPlayer;
