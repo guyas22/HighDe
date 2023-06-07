@@ -1,5 +1,7 @@
 import React from 'react';
 import { getLoginUrl } from '../utils/auth';
+import './Login.css';
+
 
 const CLIENT_ID = '03e50620de3c4aaea41cdd38a55fcdde';
 const REDIRECT_URI = 'http://localhost:3000/callback';
@@ -32,9 +34,14 @@ function Login() {
   };
 
   return (
-    <button onClick={handleLogin}>
-      Login to Spotify
-    </button>
+    <div className="login-container">
+      <h1>HighDe</h1>
+      <p>Welcome to HighDe, your personal running assistant. We create playlists for you that change with your running tempo. Just say "HighDe" for a faster tempo, or "Shwaye" for a slower one.</p>
+      <button className="login-button" onClick={handleLogin}>
+         <img src={process.env.PUBLIC_URL + '/icons8-spotify-3.svg'} alt="spotify logo" width="60" height="60" />
+        Login to Spotify
+      </button>
+    </div>
   );
 }
 

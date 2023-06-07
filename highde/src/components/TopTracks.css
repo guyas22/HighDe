@@ -1,0 +1,79 @@
+.tracks-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%; /* use the full width of the parent container */
+  }
+  
+  .track-card {
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    border: 5px solid transparent;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  .track-card.selected {
+    border-color: #1ED760; /* Spotify green */
+  }
+  
+  .track-card h2, .track-card p {
+    margin: 0;
+  }
+  
+  .generate-playlist-button {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+  }
+  
+  .generate-playlist-button button {
+    padding: 10px 20px;
+    font-size: 1.5em;
+    color: #fff;
+    background-color: #1db954;
+    border: none;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .generate-playlist-button button:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+  }
+  
+  .generate-playlist-button button:hover:not(:disabled) {
+    background-color: #1ed760;
+  }
+  
+
+  .top-tracks-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white; /* Spotify green */
+    color: #282c34; /* Text color */
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    padding: 2em 0;
+  }
+  
+  .top-tracks-container h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 1em;
+    color: #282c34; /* Spotify green */
+    text-shadow: 1px 1px 2px #282c34; /* Adds a shadow */
+  }
+  
+  
+  
