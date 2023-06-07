@@ -3,6 +3,7 @@ import { parseAccessTokenFromUrl, parseUserIdFromAccessTokenResponse } from './u
 import Login from './components/Login';
 import TopTracks from './components/TopTracks';
 import Player from './components/Player';
+import '@ionic/react/css/core.css';
 
 function App() {
   const [token, setToken] = useState(null);

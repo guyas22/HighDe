@@ -5,6 +5,7 @@ const PlaylistPlayer = ({ token, playlistIds = [] }) => {
   const [playlistIndex, setPlaylistIndex] = useState(0);
   const [playlistName, setPlaylistName] = useState('');
   const [deviceId, setDeviceId] = useState(null);
+  let first_time = true
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -72,6 +73,7 @@ const PlaylistPlayer = ({ token, playlistIds = [] }) => {
       return newIndex;
     });
   };
+ 
 
   return (
     <div className="playlist-container">

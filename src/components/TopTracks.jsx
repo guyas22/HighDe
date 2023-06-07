@@ -17,7 +17,7 @@ const TopTracks = ({ token, userId , setPage, setPlaylistIds}) => {
   }, [token]);
 
   const handleSelectTrack = (track) => {
-    console.log(`Track clicked: ${track.name}`);  // Add this line
+    console.log(`Track clicked: ${track}`);  // Add this line
     setSelectedTracks(prevTracks => {
       // If the track is already selected, deselect it
       if (prevTracks.includes(track)) {
@@ -40,23 +40,29 @@ const TopTracks = ({ token, userId , setPage, setPlaylistIds}) => {
 
 
   
-  const getRecommendationsByTempo = async (tempoRanges, seedTracks) => {
-    const response = await getRecommendations(token, seedTracks);
-    const recommendations = response.data.tracks;
+  const getRecommendationsByDanceability = async (danceabilityRanges, seedTracks) => {
+    let allRecommendations = [];
+    
+    // Get recommendations for each individual seed track
+    for (const seedTrack of seedTracks) {
+      const response = await getRecommendations(token, [seedTrack]); // use array with single seed track
+      allRecommendations.push(...response.data.tracks); // add the recommendations to our list
+    }
   
     // Fetch features for each recommended track
-    const features = await Promise.all(recommendations.map(track => getTrackFeatures(token, track.id)));
-    const tempos = features.map(feature => feature.data.tempo);
+    const features = await Promise.all(allRecommendations.map(track => getTrackFeatures(token, track.id)));
+    const danceabilities = features.map(feature => feature.data.danceability);
   
-  
-    return tempoRanges.map(([minTempo, maxTempo]) => {
-      const filteredTracks = recommendations.filter((track, index) => {
-        const tempo = tempos[index];
-        return tempo >= minTempo && tempo < maxTempo;
+    return danceabilityRanges.map(([minDanceability, maxDanceability]) => {
+      const filteredTracks = allRecommendations.filter((track, index) => {
+        const danceability = danceabilities[index];
+        return danceability >= minDanceability && danceability < maxDanceability;
       }).slice(0, 20);
       return filteredTracks;
     });
   };
+
+  
   
 
 
@@ -65,23 +71,23 @@ const TopTracks = ({ token, userId , setPage, setPlaylistIds}) => {
       console.error("You must select exactly 5 tracks");
       return;
     }
-
+  
     const seedTracks = selectedTracks.map(track => track.id);
-
-    const tempoRanges = [[60, 100], [100, 140], [140, 200]]; // Slow, medium, and fast tempo ranges (BPM)
-    const tempoPlaylists = ["Slow Tempo Playlist", "Medium Tempo Playlist", "Fast Tempo Playlist"];
-
-    const recommendedTracks = await getRecommendationsByTempo(tempoRanges, seedTracks);
+  
+    const danceabilityRanges = [[0, 0.33], [0.33, 0.66], [0.66, 1.0]]; // Low, medium, and high danceability ranges
+    const danceabilityPlaylists = ["Low Danceability Playlist", "Medium Danceability Playlist", "High Danceability Playlist"];
+  
+    const recommendedTracks = await getRecommendationsByDanceability(danceabilityRanges, seedTracks);
     
     for (const [i, playlistTracks] of recommendedTracks.entries()) {
-      const playlistName = tempoPlaylists[i];
-
+      const playlistName = danceabilityPlaylists[i];
+  
       try {
         const playlistResponse = await createPlaylist(token, userId, playlistName);
         const playlistId = playlistResponse.data.id;
-
+  
         setPlaylistIds(oldArray => [...oldArray, playlistId]);
-
+  
         const trackUris = playlistTracks.map(track => track.uri);
         await addTracksToPlaylist(token, playlistId, trackUris);
         
