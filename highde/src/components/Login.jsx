@@ -4,7 +4,7 @@ import './Login.css';
 
 
 const CLIENT_ID = '03e50620de3c4aaea41cdd38a55fcdde';
-const REDIRECT_URI = 'https://localhost:3000/callback';
+const REDIRECT_URI = 'http://localhost:3000/callback';
 const SCOPES = [
   'ugc-image-upload',
   'user-read-recently-played',
