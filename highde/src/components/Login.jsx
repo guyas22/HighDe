@@ -36,7 +36,7 @@ function Login() {
   return (
     <div className="login-container">
       <h1>HighDe</h1>
-      <p>Welcome to HighDe, your personal running assistant. We create playlists for you that change with your running tempo. Just say "HighDe" for a faster tempo, or "Shwaye" for a slower one.</p>
+      <p>weee to HighDe, your personal running assistant. We create playlists for you that change with your running tempo. Just say "HighDe" for a faster tempo, or "Shwaye" for a slower one.</p>
       <button className="login-button" onClick={handleLogin}>
          <img src={process.env.PUBLIC_URL + '/icons8-spotify-3.svg'} alt="spotify logo" width="60" height="60" />
         Login to Spotify
